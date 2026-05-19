@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Master-Prompt-Generator · KI-Workshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1012;
+    --bg-2:#15191c;
+    --panel:#171c1f;
+    --ink:#f5f3ee;
+    --ink-2:#c9c5bc;
+    --mute:#8a8579;
+    --mute-2:#5d5a52;
+    --line:#262d33;
+    --line-2:#323a42;
+    --orange:#ED4C13;
+    --orange-soft:#ff7a3d;
+    --teal:#5196AE;
+    --teal-soft:#7bb8cc;
+    --green:#2A8A3E;
+    --display:'Space Grotesk', sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased;line-height:1.5}
+  body{padding:24px 18px 48px}
+
+  .wrap{max-width:760px; margin:0 auto}
+
+  /* Header */
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:20px 0 28px; border-bottom:1px solid var(--line);
+    margin-bottom:32px;
+  }
+  .brand{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.2em;
+    color:var(--orange); text-transform:uppercase; font-weight:600;
+  }
+  .brand-sub{
+    font-family:var(--mono); font-size:11px; color:var(--mute);
+    letter-spacing:0.12em; text-transform:uppercase; margin-top:4px;
+  }
+
+  /* Hero */
+  h1{
+    font-family:var(--display); font-weight:600; line-height:1.1;
+    letter-spacing:-0.02em; font-size:clamp(32px, 6vw, 48px);
+    margin:0 0 16px;
+  }
+  h1 .accent{color:var(--orange)}
+  .lead{
+    font-size:clamp(15px, 2.5vw, 17px); color:var(--ink-2); margin:0 0 28px;
+    max-width:62ch; line-height:1.55;
+  }
+
+  /* Copy button */
+  .copy-btn{
+    background:var(--orange); color:#fff; border:none; padding:16px 26px;
+    border-radius:99px; font-family:var(--mono); font-size:13px; letter-spacing:0.1em;
+    font-weight:600; cursor:pointer; transition:all 200ms var(--ease);
+    text-transform:uppercase; display:inline-flex; align-items:center; gap:10px;
+    box-shadow: 0 4px 24px rgba(237,76,19,0.25);
+  }
+  .copy-btn:hover{background:var(--orange-soft); transform:translateY(-1px)}
+  .copy-btn:active{transform:translateY(0)}
+  .copy-btn.copied{background:var(--green); box-shadow: 0 4px 24px rgba(42,138,62,0.3)}
+  .copy-btn svg{width:18px; height:18px}
+
+  /* Prompt box */
+  .prompt-box{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:24px 26px; margin-top:28px;
+    font-family:var(--mono); font-size:13px; line-height:1.7;
+    color:var(--ink); white-space:pre-wrap; word-break:break-word;
+    overflow-x:auto;
+  }
+
+  /* Steps */
+  .how{
+    margin-top:40px; padding:24px 26px;
+    background:var(--bg-2); border:1px solid var(--line); border-radius:14px;
+  }
+  .how-title{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.16em;
+    color:var(--teal-soft); text-transform:uppercase; font-weight:600;
+    margin-bottom:14px;
+  }
+  .how ol{margin:0; padding-left:22px}
+  .how li{margin-bottom:8px; color:var(--ink-2); font-size:15px}
+  .how b{color:var(--ink); font-weight:600}
+
+  /* Footer */
+  footer{
+    margin-top:48px; padding-top:24px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11px; color:var(--mute);
+    letter-spacing:0.04em; line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="brand">Master-Prompt-Generator</div>
+      <div class="brand-sub">Aus dem KI-Workshop</div>
+    </div>
+    <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span id="copy-label">Kopieren</span>
+    </button>
+  </header>
+
+  <h1>Lass die KI deinen <span class="accent">perfekten Prompt</span> bauen.</h1>
+  <p class="lead">
+    Diesen Text einmal kopieren. In ChatGPT, Claude oder Gemini einfügen.
+    Die KI fragt dich aus und erzeugt am Ende einen fertigen Profi-Prompt für dein Anliegen.
+  </p>
+
+  <pre class="prompt-box" id="prompt-box"></pre>
+
+  <div class="how">
+    <div class="how-title">So nutzt du ihn</div>
+    <ol>
+      <li><b>Oben „Kopieren"</b> drücken — der Prompt landet in deiner Zwischenablage</li>
+      <li><b>chatgpt.com</b> oder <b>claude.ai</b> oder <b>gemini.google.com</b> öffnen</li>
+      <li><b>Prompt einfügen und absenden</b></li>
+      <li><b>Auf die Fragen antworten</b> — eine nach der anderen, jeweils 10–20 Sekunden</li>
+      <li>Am Ende bekommst du einen <b>fertigen Prompt</b>, den du beliebig oft verwenden kannst</li>
+    </ol>
+  </div>
+
+  <footer>
+    Tipp: Diesen Prompt einmal als <b>eigenes GPT</b> bei ChatGPT speichern — dann ist er ein Klick weit weg.<br/>
+    KI-Workshop · 75 Min · Sparkasse
+  </footer>
+</div>
+
+<script>
+  const MASTER_PROMPT = `Du bist ein Prompt-Architekt. Deine einzige Aufgabe: Hilf mir Schritt für Schritt, den bestmöglichen Prompt für mein Anliegen zu entwickeln.
+
+ABLAUF:
+1. Frage mich: "Was möchtest du erreichen?" – und warte auf meine Antwort.
+2. Schätze die Komplexität ein:
+   - Einfach (klare Einzelaufgabe): 2–3 Nachfragen
+   - Mittel (mehrere Aspekte): 3–4 Nachfragen
+   - Komplex (vielschichtig, strategisch): 5–6 Nachfragen
+3. Stelle deine Nachfragen EINZELN – eine pro Nachricht. Warte jeweils auf meine Antwort.
+4. Fasse danach in 2–3 Sätzen zusammen, was du verstanden hast. Frage: "Stimmt das so?"
+5. Erstelle daraus einen fertigen Prompt, den ich direkt in jede KI kopieren kann.
+
+DEINE NACHFRAGEN KLÄREN (je nach Bedarf – nicht immer alle):
+- Was genau soll das Ergebnis sein?
+- Für wen ist es bestimmt?
+- Welcher Ton / Stil passt? (locker, sachlich, kreativ, formell …)
+- Welches Format soll das Ergebnis haben? (Liste, Fließtext, Tabelle, Stichpunkte …)
+- Gibt es wichtigen Kontext oder Einschränkungen?
+- Aus welcher Perspektive oder Rolle soll die KI antworten?
+
+REGELN FÜR DEN GENERIERTEN PROMPT:
+- In sich geschlossen und sofort nutzbar – ohne weitere Anpassung nötig
+- Klare Rollenanweisung, wenn eine Expertenrolle sinnvoll ist
+- Ziel, Kontext und Format eindeutig definiert
+- In der Sprache, in der wir gerade kommunizieren
+
+Beginne jetzt.`;
+
+  document.getElementById('prompt-box').textContent = MASTER_PROMPT;
+
+  function copyPrompt(){
+    navigator.clipboard.writeText(MASTER_PROMPT).then(() => {
+      const btn = document.getElementById('copy-btn');
+      const label = document.getElementById('copy-label');
+      label.textContent = 'Kopiert ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        label.textContent = 'Kopieren';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(() => {
+      // Fallback: select the text so user can manually copy
+      const range = document.createRange();
+      range.selectNode(document.getElementById('prompt-box'));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      alert('Konnte nicht automatisch kopieren — der Text ist jetzt markiert, kopier ihn mit Cmd/Strg+C.');
+    });
+  }
+</script>
+</body>
+</html>
